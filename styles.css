@@ -942,7 +942,7 @@ html.project-page-html {
     min-height: 0;
     max-height: 100%;
     flex: 1;
-    background-size: cover;
+    background-size: auto 100%;
     background-position: center;
     background-repeat: no-repeat;
   }
