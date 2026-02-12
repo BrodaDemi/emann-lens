@@ -351,20 +351,21 @@ html[data-theme="light"] .theme-toggle__handle {
   z-index: 1000;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.5s ease;
+  visibility: hidden;
 }
 
 .project-overlay.is-visible {
   pointer-events: auto;
   opacity: 1;
+  visibility: visible;
 }
 
+/* Backdrop visible instantly when overlay opens; no opacity transition to avoid clash with panel slide */
 .project-overlay__backdrop {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.72);
   opacity: 0;
-  transition: opacity 1s ease;
 }
 
 .project-overlay.is-visible .project-overlay__backdrop {

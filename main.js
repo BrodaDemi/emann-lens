@@ -98,10 +98,9 @@
     panel.appendChild(iframe);
     projectOverlay.appendChild(panel);
     document.body.appendChild(projectOverlay);
+    projectOverlay.offsetHeight;
     requestAnimationFrame(function () {
-      requestAnimationFrame(function () {
-        projectOverlay.classList.add('is-visible');
-      });
+      projectOverlay.classList.add('is-visible');
     });
     iframe.src = absoluteUrl;
   }
