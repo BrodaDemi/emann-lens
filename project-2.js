@@ -1,4 +1,10 @@
 (function () {
+  if (window.self === window.top) {
+    var base = window.location.pathname.replace(/\/[^/]+$/, '') || '';
+    var indexUrl = (base ? base + '/' : '') + 'index.html?project=project-2.html';
+    window.location.replace(indexUrl);
+    return;
+  }
   if (window.self !== window.top) {
     function closeOverlay(e) {
       e.preventDefault();

@@ -15,6 +15,7 @@
     mainPage.classList.add('is-visible');
     mainPage.setAttribute('aria-hidden', 'false');
     sessionStorage.setItem('loaderSeen', '1');
+    if (typeof openProjectFromUrl === 'function') openProjectFromUrl();
   }
 
   var navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
@@ -136,6 +137,17 @@
   window.addEventListener('message', function (e) {
     if (e.data === 'closeProjectOverlay') closeProjectOverlay();
   });
+
+  function openProjectFromUrl() {
+    var params = new URLSearchParams(window.location.search);
+    var project = params.get('project');
+    if (project === 'project-1.html' || project === 'project-2.html' || project === 'project-3.html') {
+      openProjectOverlay(project);
+      try {
+        history.replaceState(null, '', window.location.pathname + window.location.hash);
+      } catch (e) {}
+    }
+  }
 
   /* Contact overlay: open from nav link, close with button or backdrop */
   var contactOverlay = document.getElementById('contact-overlay');
@@ -287,5 +299,7 @@
       }
     });
   });
+
+  if (skipLoader) openProjectFromUrl();
 
 })();
