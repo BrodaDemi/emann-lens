@@ -12,12 +12,29 @@
   }
 
   var projects = [
-    { category: 'Interior', images: [
-      'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1200&q=80&fit=crop',
-      'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=1200&q=80&fit=crop',
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80&fit=crop',
-      'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=1200&q=80&fit=crop',
-      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=1200&q=80&fit=crop'
+    { category: 'Portrait', images: [
+      '/assets/portraits/hero.png',
+      '/assets/portraits/01.png',
+      '/assets/portraits/02.png',
+      '/assets/portraits/03.png',
+      '/assets/portraits/04.png',
+      '/assets/portraits/05.png',
+      '/assets/portraits/06.png',
+      '/assets/portraits/07.png',
+      '/assets/portraits/08.png',
+      '/assets/portraits/09.png',
+      '/assets/portraits/10.png',
+      '/assets/portraits/11.png',
+      '/assets/portraits/12.png',
+      '/assets/portraits/13.png',
+      '/assets/portraits/14.png',
+      '/assets/portraits/15.png',
+      '/assets/portraits/16.png',
+      '/assets/portraits/17.png',
+      '/assets/portraits/18.png',
+      '/assets/portraits/19.png',
+      '/assets/portraits/20.png',
+      '/assets/portraits/21.png'
     ]},
     { category: 'Portrait', images: [
       'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=1200&q=80&fit=crop',
@@ -98,9 +115,18 @@
     ]}
   ];
 
-  var params = new URLSearchParams(window.location.search);
-  var index = Math.max(0, Math.min(parseInt(params.get('p'), 10) - 1, projects.length - 1));
-  if (isNaN(index) || index < 0) index = 0;
+  var index = 0;
+  try {
+    var stored = sessionStorage.getItem('projectIndex');
+    if (stored !== null) {
+      index = Math.max(0, Math.min(parseInt(stored, 10), projects.length - 1));
+      sessionStorage.removeItem('projectIndex');
+    } else {
+      var params = new URLSearchParams(window.location.search);
+      index = Math.max(0, Math.min(parseInt(params.get('p'), 10) - 1, projects.length - 1));
+      if (isNaN(index) || index < 0) index = 0;
+    }
+  } catch (err) {}
   var project = projects[index];
 
   var heroImg = document.getElementById('project-hero-img');

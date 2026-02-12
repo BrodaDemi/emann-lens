@@ -78,6 +78,9 @@
 
   function openProjectOverlay(url) {
     if (projectOverlay) return;
+    var absoluteUrl = new URL(url, window.location.href).href;
+    var sep = absoluteUrl.indexOf('?') >= 0 ? '&' : '?';
+    absoluteUrl = absoluteUrl + sep + '_=' + Date.now();
     projectOverlay = document.createElement('div');
     projectOverlay.className = 'project-overlay';
     projectOverlay.setAttribute('role', 'dialog');
@@ -99,7 +102,7 @@
         projectOverlay.classList.add('is-visible');
       });
     });
-    iframe.src = url;
+    iframe.src = absoluteUrl;
   }
 
   function closeProjectOverlay() {
@@ -141,6 +144,12 @@
 
   function openContactOverlay() {
     if (!contactOverlay) return;
+    var col = contactOverlay.querySelector('.contact-form-col');
+    var fb = contactOverlay.querySelector('#contact-feedback');
+    var form = contactOverlay.querySelector('.contact-form');
+    if (col) col.classList.remove('is-success');
+    if (fb) fb.setAttribute('aria-hidden', 'true');
+    if (form) form.reset();
     contactOverlay.setAttribute('aria-hidden', 'false');
     contactOverlay.offsetHeight;
     requestAnimationFrame(function () {
@@ -151,9 +160,31 @@
 
   function closeContactOverlay() {
     if (!contactOverlay) return;
-    contactOverlay.classList.remove('is-visible');
-    contactOverlay.setAttribute('aria-hidden', 'true');
-    window.location.hash = '#work';
+    var mainPage = document.getElementById('main-page');
+    var reveal = document.createElement('div');
+    reveal.className = 'contact-overlay__reveal';
+    if (mainPage) {
+      var clone = mainPage.cloneNode(true);
+      clone.id = '';
+      clone.setAttribute('aria-hidden', 'true');
+      clone.classList.add('is-visible', 'contact-overlay__reveal-content');
+      reveal.appendChild(clone);
+    }
+    contactOverlay.appendChild(reveal);
+    reveal.offsetHeight;
+    requestAnimationFrame(function () {
+      contactOverlay.classList.add('is-closing');
+    });
+    function onRevealDone(e) {
+      if (e && e.propertyName && e.propertyName !== 'transform') return;
+      reveal.removeEventListener('transitionend', onRevealDone);
+      if (reveal.parentNode) reveal.parentNode.removeChild(reveal);
+      contactOverlay.classList.remove('is-closing');
+      contactOverlay.classList.remove('is-visible');
+      contactOverlay.setAttribute('aria-hidden', 'true');
+      window.location.hash = '#work';
+    }
+    reveal.addEventListener('transitionend', onRevealDone);
   }
 
   document.querySelectorAll('.main-nav__link').forEach(function (link) {
@@ -170,18 +201,60 @@
   if (contactBackdrop) contactBackdrop.addEventListener('click', closeContactOverlay);
 
   var contactForm = contactOverlay && contactOverlay.querySelector('.contact-form');
-  if (contactForm) {
+  var contactFormCol = contactOverlay && contactOverlay.querySelector('.contact-form-col');
+  var contactFeedback = contactOverlay && contactOverlay.querySelector('#contact-feedback');
+  /* Replace YOUR_FORM_ID with your Formspree form ID from https://formspree.io (after creating a form for emannlens@gmail.com) */
+  var FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+  if (contactForm && contactFormCol && contactFeedback) {
     contactForm.addEventListener('submit', function (e) {
       e.preventDefault();
-      /* TODO: send form (e.g. to Formspree or your backend) */
+      var submitBtn = contactForm.querySelector('button[type="submit"]');
+      var originalText = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Sending…';
+      }
+      fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        body: new FormData(contactForm),
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(function (res) {
+          if (res.ok) {
+            contactForm.reset();
+            contactFormCol.classList.add('is-success');
+            contactFeedback.setAttribute('aria-hidden', 'false');
+          } else {
+            throw new Error('Form submission failed');
+          }
+        })
+        .catch(function () {
+          if (contactFeedback) {
+            var msg = contactFeedback.querySelector('.contact-feedback__message');
+            if (msg) msg.textContent = 'Something went wrong. Please try again or email emannlens@gmail.com directly.';
+            contactFormCol.classList.add('is-success');
+            contactFeedback.setAttribute('aria-hidden', 'false');
+          }
+        })
+        .finally(function () {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+          }
+        });
     });
   }
 
   cells.forEach(function (cell) {
     var link = cell.getAttribute('href') || '';
-    if (link.indexOf('project.html') !== -1) {
+    if (link.indexOf('project.html') !== -1 || link.indexOf('project-1.html') !== -1 || link.indexOf('project-2.html') !== -1 || link.indexOf('project-3.html') !== -1) {
       cell.addEventListener('click', function (e) {
         e.preventDefault();
+        if (link.indexOf('project-1.html') === -1 && link.indexOf('project-2.html') === -1 && link.indexOf('project-3.html') === -1) {
+          var match = link.match(/[?&]p=(\d+)/);
+          var p = match ? parseInt(match[1], 10) : 1;
+          try { sessionStorage.setItem('projectIndex', String(Math.max(0, p - 1))); } catch (err) {}
+        }
         openProjectOverlay(link);
       });
     }
