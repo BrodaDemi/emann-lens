@@ -894,11 +894,11 @@ html.project-page-html {
     flex-direction: column;
     grid-template-columns: unset;
     grid-template-rows: unset;
-    padding: 16px 16px 12px;
+    padding: 16px 16px 16px;
     height: 100%;
     min-height: 0;
     overflow: hidden;
-    gap: 12px;
+    gap: 16px;
   }
 
   /* Header row: logo (left) + Close (right) */
@@ -1104,8 +1104,8 @@ html.project-page-html {
 /* ========== RESPONSIVE: Project page & overlay ========== */
 @media (max-width: 600px) {
   .project-layout {
-    padding: 14px 14px 10px;
-    gap: 10px;
+    padding: 14px 14px 16px;
+    gap: 16px;
   }
 
   .project-close {
@@ -1134,8 +1134,8 @@ html.project-page-html {
 
 @media (max-width: 400px) {
   .project-layout {
-    padding: 12px 12px 8px;
-    gap: 8px;
+    padding: 12px 12px 16px;
+    gap: 16px;
   }
 
   .project-close {
