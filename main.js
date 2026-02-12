@@ -250,10 +250,10 @@
 
   cells.forEach(function (cell) {
     var link = cell.getAttribute('href') || '';
-    if (link.indexOf('project.html') !== -1 || link.indexOf('project-1.html') !== -1 || link.indexOf('project-2.html') !== -1 || link.indexOf('project-3.html') !== -1) {
+    if (link.indexOf('project.html') !== -1 || link.indexOf('project-1.html') !== -1 || link.indexOf('project-2.html') !== -1 || link.indexOf('project-3.html') !== -1 || link.indexOf('project-4.html') !== -1) {
       cell.addEventListener('click', function (e) {
         e.preventDefault();
-        if (link.indexOf('project-1.html') === -1 && link.indexOf('project-2.html') === -1 && link.indexOf('project-3.html') === -1) {
+        if (link.indexOf('project-1.html') === -1 && link.indexOf('project-2.html') === -1 && link.indexOf('project-3.html') === -1 && link.indexOf('project-4.html') === -1) {
           var match = link.match(/[?&]p=(\d+)/);
           var p = match ? parseInt(match[1], 10) : 1;
           try { sessionStorage.setItem('projectIndex', String(Math.max(0, p - 1))); } catch (err) {}
