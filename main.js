@@ -126,12 +126,14 @@
     function removeOverlay(e) {
       if (e && e.propertyName && e.propertyName !== 'transform') return;
       reveal.removeEventListener('transitionend', removeOverlay);
+      clearTimeout(removeOverlayFallback);
       if (projectOverlay && projectOverlay.parentNode) {
         projectOverlay.parentNode.removeChild(projectOverlay);
       }
       projectOverlay = null;
     }
     reveal.addEventListener('transitionend', removeOverlay);
+    var removeOverlayFallback = setTimeout(removeOverlay.bind(null, { propertyName: 'transform' }), 2000);
   }
 
   window.addEventListener('message', function (e) {
